@@ -11,6 +11,6 @@ lazy val root = project
       "org.typelevel" %% "cats-core" % "2.3.1",
       "org.typelevel" %% "cats-effect" % "3.0.0-M5",
       "co.fs2" %% "fs2-io" % "3.0.0-M7",
-      "com.novocode" % "junit-interface" % "0.11" % "test"
+      "org.scalameta" %% "munit" % "0.7.21" % Test
     )
   )
