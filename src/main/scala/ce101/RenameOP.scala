@@ -12,7 +12,7 @@ import java.io.File
   * small script to rename my OP files
   */
 
-object RenameOP extends IOApp.Simple:
+object RenameOP extends IOApp.Simple :
 
   def getListOfFiles(dir: String):IO[List[File]] =
     IO{
@@ -25,12 +25,12 @@ object RenameOP extends IOApp.Simple:
     
   def newName(name : String, dir :String) : String =
     val extension = name.takeRight(3)
-    val nameLength = "OP - xxx".length
-    s"""|${dir}${name.take(nameLength)}.${extension}""".stripMargin
+    val nameLength = "Fire Force S2 - XX".length
+    val prefixLength = "[Golumpa] ".length
+    s"""|${dir}${name.drop(prefixLength).take(nameLength)}.${extension}""".stripMargin
   
-  val dir = "" 
+  val dir = "/media/renghen/Acer/Users/rengh/Downloads/torrent/fire force s2/" 
   override def run = for{
     files <- getListOfFiles(dir)
-    _ <- IO{files.map{file => file.renameTo(new File(newName(file.getName,dir)))}
-  }
+    _ <- IO{files.map{file => file.renameTo(new File(newName(file.getName,dir)))}}
   } yield()
