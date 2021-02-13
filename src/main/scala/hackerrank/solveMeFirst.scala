@@ -30,7 +30,7 @@ object SolveMeFirst extends IOApp.Simple {
   override def run = 
     for
       first  <- readInt("Enter 1st number(1-1000) > ")
-      second <- readInt("Enter 2sd number(1-1000) > ")
+      second <- readInt("Enter 2nd number(1-1000) > ")
       _ <- IO.println(first + second)
     yield()
 }
