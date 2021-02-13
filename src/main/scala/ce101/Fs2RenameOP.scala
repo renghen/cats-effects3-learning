@@ -6,7 +6,7 @@ import cats.effect._
 
 import java.nio.file.Paths
 
-object Fs2RenameOP extends IOApp.Simple:
+object Fs2RenameOP extends IOApp.Simple :
   val dir = RenameOP.dir  
   override def run =
     Files[IO].walk(Paths.get(dir))
