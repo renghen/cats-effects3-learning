@@ -7,7 +7,7 @@ import cats._
 import cats.syntax._
 import cats.implicits._
 
-object SolveMeFirst extends IOApp.Simple {
+object SolveMeFirst extends IOApp.Simple :
 
   def isInRange(number : Int, start : Int = 0, end : Int = 1001) = 
     if (number > start && number < end) then
@@ -15,7 +15,7 @@ object SolveMeFirst extends IOApp.Simple {
     else
       Left(NumberFormatException())
 
-  def readInt(prompt: String) : IO[Int] =
+  def readInt(prompt: String, start : Int = 0, end : Int = 1001) : IO[Int] =
     IO.print(prompt) *>
     IO.readLine.map { str =>
       Either
@@ -33,4 +33,4 @@ object SolveMeFirst extends IOApp.Simple {
       second <- readInt("Enter 2nd number(1-1000) > ")
       _ <- IO.println(first + second)
     yield()
-}
+
