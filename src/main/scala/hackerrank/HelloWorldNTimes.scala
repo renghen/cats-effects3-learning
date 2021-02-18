@@ -21,5 +21,6 @@ object HelloWorldNTimes extends cats.effect.IOApp.Simple :
       // _ <- 0.iterateWhileM(n => IO.println("Hello World").as(n + 1))(_ < count).void
       // _   <- count.iterateUntilM(n => IO.println("Hello World").as(n-1))(_ == 0).void
       i <- (IO.println("Hello World") *> IO.pure(4)).repeat(count)
+     
     yield()
 
