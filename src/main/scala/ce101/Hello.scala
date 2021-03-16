@@ -6,7 +6,7 @@ import cats.effect.std.Random
 
 import scala.concurrent.duration._
 
-object Hello extends IOApp.Simple {
+object Hello extends IOApp.Simple:
   val rnd = Random.scalaUtilRandom[IO]
 
   def greeter(word: String): IO[Unit] = rnd.>>= { r =>
@@ -22,4 +22,3 @@ object Hello extends IOApp.Simple {
       _ <- IO.sleep(5.seconds)
       _ <- hello.cancel >> world.cancel
     } yield ()
-}
