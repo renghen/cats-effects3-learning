@@ -1,5 +1,5 @@
 val scala3Version = "3.0.0-RC1"
-val catsEffectVersion = "3.0.0-RC2"
+val catsEffectVersion = "3.0.0"
 
 lazy val root = project
   .in(file("."))
@@ -17,6 +17,10 @@ lazy val root = project
     ),
     scalacOptions ++= Seq(
       "-rewrite",
-      "-indent"
+      "-indent",
+      "-feature",
+      "-deprecation",
+      "-unchecked",
+      "-language:postfixOps"
     )
   )
