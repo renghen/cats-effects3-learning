@@ -1,12 +1,10 @@
 package tutorial
 
-import cats.effect.{IO,Resource,IOApp,ExitCode,Sync, Async}
-import cats.effect.IO.asyncForIO
+import cats.effect.{IO,Resource,IOApp,ExitCode, Sync, Async}
 import cats.effect.std.Semaphore
-import java.io.*
-import cats.implicits.*
 import cats.syntax.all.*
 
+import java.io.*
 
 object FileCopyPoly extends IOApp:
   
@@ -65,6 +63,6 @@ object FileCopyPoly extends IOApp:
                 else IO.unit
       orig = new File(args(0))
       dest = new File(args(1))
-      count <- copy(orig, dest)
+      count <- copy[IO](orig, dest)
       _     <- IO.println(s"$count bytes copied from ${orig.getPath} to ${dest.getPath}")
     } yield ExitCode.Success
