@@ -6,76 +6,66 @@ import cats.syntax.all.*
 
 import java.io.*
 
-object FileCopyPoly extends IOApp:
+object FileCopyPolyUsing extends IOApp{
 
-  def inputStream[F[_]: Sync](
-      f: File,
-      guard: Semaphore[F]
-  ): Resource[F, FileInputStream] =
+  def inputStream[F[_]](f: File, guard: Semaphore[F])(using sync: Sync[F]): Resource[F, FileInputStream] =
     Resource.make {
-      Sync[F].delay(FileInputStream(f))
+      sync.delay(FileInputStream(f))
     } { inStream =>
       guard.permit.use { _ =>
-        Sync[F].delay(inStream.close()).handleErrorWith(_ => Sync[F].unit)
+        sync.delay(inStream.close()).handleErrorWith(_ => sync.unit)
       }
     }
 
-  def outputStream[F[_]: Sync](
-      f: File,
-      guard: Semaphore[F]
-  ): Resource[F, FileOutputStream] =
+  def outputStream[F[_]](f: File, guard: Semaphore[F])(using sync: Sync[F]): Resource[F, FileOutputStream] =
     Resource.make {
-      Sync[F].delay(new FileOutputStream(f))
+      sync.delay(new FileOutputStream(f))
     } { outStream =>
-      guard.permit.use { _ =>
-        Sync[F].delay(outStream.close()).handleErrorWith(_ => Sync[F].unit)
+      guard.permit.use { _ => sync.delay(outStream.close()).handleErrorWith(_ => sync.unit)
       }
     }
 
-  def inputOutputStreams[F[_]: Sync](
-      in: File,
-      out: File,
-      guard: Semaphore[F]
-  ): Resource[F, (InputStream, OutputStream)] =
+  def inputOutputStreams[F[_]](in: File, out: File,
+    guard: Semaphore[F])(using sync: Sync[F]): Resource[F, (InputStream, OutputStream)] =
     for {
       inStream <- inputStream(in, guard)
       outStream <- outputStream(out, guard)
     } yield (inStream, outStream)
 
-  def transmit[F[_]: Sync](
+  def transmit[F[_]](
       origin: InputStream,
       destination: OutputStream,
       buffer: Array[Byte],
       acc: Long
-  ): F[Long] =
+  )(using sync: Sync[F]): F[Long] =
     for {
-      amount <- Sync[F].blocking(origin.read(buffer, 0, buffer.length))
+      amount <- sync.blocking(origin.read(buffer, 0, buffer.length))
       count <-
         if (amount > -1)
-          Sync[F].blocking(destination.write(buffer, 0, amount)) >> transmit(
+          sync.blocking(destination.write(buffer, 0, amount)) >> transmit(
             origin,
             destination,
             buffer,
             acc + amount
           )
         else
-          Sync[F].pure(
+          sync.pure(
             acc
           ) // End of read stream reached (by java.io.InputStream contract), nothing to write
     } yield count // Returns the actual amount of bytes transmitted
 
-  def transfer[F[_]: Sync](
+  def transfer[F[_]](
       origin: InputStream,
       destination: OutputStream
-  ): F[Long] =
+  )(using sync: Sync[F]): F[Long] =
     for {
-      buffer <- Sync[F].delay(
+      buffer <- sync.delay(
         new Array[Byte](1024 * 10)
       ) // Allocated only when the IO is evaluated
       total <- transmit(origin, destination, buffer, 0L)
     } yield total
 
-  def copy[F[_]: Async](origin: File, destination: File): F[Long] =
+  def copy[F[_]](origin: File, destination: File)(using async: Async[F]): F[Long] =
     for {
       guard <- Semaphore[F](1)
       count <- inputOutputStreams(origin, destination, guard).use {
@@ -101,3 +91,5 @@ object FileCopyPoly extends IOApp:
         s"$count bytes copied from ${orig.getPath} to ${dest.getPath}"
       )
     } yield ExitCode.Success
+
+  }
