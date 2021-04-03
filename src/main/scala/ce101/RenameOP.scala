@@ -21,13 +21,15 @@ object RenameOP extends IOApp.Simple:
       else
         List[File]()
     }  
-    
+  
   def newName(name : String, dir :String) : String =
     val extension = name.takeRight(3)
-    val nameLength = "One Piece - XXX".length
-    s"""|${dir}${name.take(nameLength)}.${extension}""".stripMargin
+    val startDrop = "[Golumpa] ".length
+    val nameLength = "My Hero Academia S3 - 03".length()
+    s"""|${dir}${name.drop(startDrop)take(nameLength)}.${extension}""".stripMargin
   
-  val dir = "/media/renghen/Acer/Users/rengh/Downloads/torrent/One Piece - Season 11 Voyage 4/"
+  val dir = "/media/renghen/64470AAE2B15DF04/tmp/anime/My Hero Academia/s4/"
+
   override def run = 
     for
       files <- getListOfFiles(dir)

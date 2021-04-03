@@ -3,10 +3,9 @@ package tutorial
 import cats.effect.{IO, Resource, IOApp, ExitCode, Sync, Async}
 import cats.effect.std.Semaphore
 import cats.syntax.all.*
-
 import java.io.*
 
-object FileCopyPolyUsing extends IOApp{
+object FileCopyPolyUsing extends IOApp:
 
   def inputStream[F[_]](f: File, guard: Semaphore[F])(using sync: Sync[F]): Resource[F, FileInputStream] =
     Resource.make {
@@ -76,20 +75,42 @@ object FileCopyPolyUsing extends IOApp{
       }
     } yield count
 
+  def confirmedOverwrite(dest : File) : IO[Boolean] = 
+    if dest.exists then
+      IO.print("Destination File already exist, overwrite?(Y/N) > ") >>
+         IO.readLine >>= { resp =>
+          val upperResp = resp.toUpperCase
+          if upperResp != "Y" && upperResp != "N" then
+            IO.println("Illegal character Either(Y/N)") >> confirmedOverwrite(dest)
+          else if upperResp == "Y" then
+            IO(true)
+          else 
+            IO(false)
+         }
+    else 
+      IO(true)
+
   override def run(args: List[String]): IO[ExitCode] =
     for {
       _ <-
-        if (args.length < 2)
+        if (args.length < 2) then
           IO.raiseError(
             new IllegalArgumentException("Need origin and destination files")
           )
-        else IO.unit
+        else if(args(0) == args(1)) then 
+          IO.raiseError(
+            new IllegalArgumentException("Need origin and destination files to be different")
+          )          
+        else IO.unit     
       orig = new File(args(0))
       dest = new File(args(1))
+      continue <- confirmedOverwrite(dest)
+      _ <- if !continue then
+            IO.raiseError(new IllegalArgumentException("Overwrite not authorise, cannot continue"))
+           else
+            IO.unit 
       count <- copy[IO](orig, dest)
       _ <- IO.println(
         s"$count bytes copied from ${orig.getPath} to ${dest.getPath}"
       )
     } yield ExitCode.Success
-
-  }
