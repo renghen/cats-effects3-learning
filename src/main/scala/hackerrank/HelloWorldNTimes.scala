@@ -4,7 +4,7 @@ import cats.effect._
 import cats.syntax._
 import cats.implicits._
 
-import fs2._
+// import fs2._
 
 object HelloWorldNTimes extends cats.effect.IOApp.Simple : 
 
