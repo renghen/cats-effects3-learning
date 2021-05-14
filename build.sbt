@@ -1,6 +1,7 @@
 val scala3Version = "3.0.0"
 val catsEffectVersion = "3.1.1"
 val catsCoreVersion = "2.6.1"
+val fs2Version = "3.0.3"
 val dottyCPSasync = "0.7.0"
 
 lazy val root = project
@@ -15,7 +16,7 @@ lazy val root = project
       "org.typelevel" %% "cats-effect" % catsEffectVersion,
       "org.typelevel" %% "cats-effect-kernel" % catsEffectVersion,
       "org.typelevel" %% "cats-effect-std" % catsEffectVersion,
-      // "co.fs2" %% "fs2-io" % "3.0.2",
+      "co.fs2" %% "fs2-io" % fs2Version,
       "com.github.rssh" %% "dotty-cps-async" % dottyCPSasync,
       // "com.github.rssh" %% "cps-async-connect-cats-effect" % "0.4.0",
       "org.scalameta" %% "munit" % "0.7.26" % Test
