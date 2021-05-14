@@ -4,7 +4,6 @@ import cats.effect.{IO, IOApp}
 import scala.concurrent.duration._
 import cps._
 
-
 // obviously this isn't actually the problem definition, but it's kinda fun
 object FizzBuzzIO extends IOApp.Simple:
   val run =
